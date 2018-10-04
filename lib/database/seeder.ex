@@ -18,7 +18,21 @@ defmodule Database.Seeder do
     end)
   end
 
-  def seed_by_writes_group(group_size \\ 60_000) do
+  def seed_by_writes_flow do
+    modes = [:write]
+
+    File.open(@file_name, modes, fn file ->
+      1..@many_people
+      |> Flow.from_enumerable()
+      |> Flow.partition()
+      |> Flow.each(fn _ ->
+        :file.write(file, Person.random())
+      end)
+      |> Flow.run()
+    end)
+  end
+
+  def seed_by_writes_group(group_size \\ 10_000) do
     modes = [:raw, :write]
 
     many_people = div(@many_people, group_size)
@@ -32,6 +46,23 @@ defmodule Database.Seeder do
     end)
   end
 
+  def seed_by_writes_group_flow(group_size \\ 10_000) do
+    modes = [:append]
+
+    many_people = div(@many_people, group_size)
+
+    File.open(@file_name, modes, fn file ->
+      1..many_people
+      |> Flow.from_enumerable()
+      |> Flow.partition()
+      |> Flow.each(fn _ ->
+        group = for _ <- 1..group_size, do: Database.Person.random()
+        :file.write(file, group)
+      end)
+      |> Flow.run()
+    end)
+  end
+
   def seed_by_delayed_writes do
     modes = [:raw, :write, :delayed_write]
 
@@ -42,7 +73,21 @@ defmodule Database.Seeder do
     end)
   end
 
-  def seed_by_delayed_writes_group(group_size \\ 60_000) do
+  def seed_by_delayed_writes_flow do
+    modes = [:write, :delayed_write]
+
+    File.open(@file_name, modes, fn file ->
+      1..@many_people
+      |> Flow.from_enumerable()
+      |> Flow.partition()
+      |> Flow.each(fn _ ->
+        :file.write(file, Person.random())
+      end)
+      |> Flow.run()
+    end)
+  end
+
+  def seed_by_delayed_writes_group(group_size \\ 10_000) do
     modes = [:raw, :write, :delayed_write]
 
     many_people = div(@many_people, group_size)
@@ -53,6 +98,24 @@ defmodule Database.Seeder do
 
         :file.write(file, group)
       end)
+    end)
+  end
+
+  def seed_by_delayed_writes_group_flow(group_size \\ 10_000) do
+    modes = [:write, :delayed_write]
+
+    many_people = div(@many_people, group_size)
+
+    File.open(@file_name, modes, fn file ->
+      1..many_people
+      |> Flow.from_enumerable()
+      |> Flow.partition()
+      |> Flow.each(fn _ ->
+        group = for _ <- 1..group_size, do: Person.random()
+
+        :file.write(file, group)
+      end)
+      |> Flow.run()
     end)
   end
 end
