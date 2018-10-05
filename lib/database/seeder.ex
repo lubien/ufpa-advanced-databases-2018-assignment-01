@@ -19,6 +19,7 @@ defmodule Database.Seeder do
   end
 
   def seed_by_writes_flow do
+    empty_db_file()
     modes = [:write]
 
     File.open(@file_name, modes, fn file ->
@@ -47,6 +48,7 @@ defmodule Database.Seeder do
   end
 
   def seed_by_writes_group_flow(group_size \\ 10_000) do
+    empty_db_file()
     modes = [:append]
 
     many_people = div(@many_people, group_size)
@@ -74,6 +76,7 @@ defmodule Database.Seeder do
   end
 
   def seed_by_delayed_writes_flow do
+    empty_db_file()
     modes = [:write, :delayed_write]
 
     File.open(@file_name, modes, fn file ->
@@ -102,6 +105,7 @@ defmodule Database.Seeder do
   end
 
   def seed_by_delayed_writes_group_flow(group_size \\ 10_000) do
+    empty_db_file()
     modes = [:write, :delayed_write]
 
     many_people = div(@many_people, group_size)
@@ -117,5 +121,9 @@ defmodule Database.Seeder do
       end)
       |> Flow.run()
     end)
+  end
+
+  def empty_db_file do
+    File.write(@file_name, "")
   end
 end
