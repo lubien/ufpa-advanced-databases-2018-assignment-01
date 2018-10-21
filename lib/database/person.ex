@@ -34,8 +34,9 @@ defmodule Database.Person do
   def is_female?(tuple), do: not is_male?(tuple)
 
   def get_gender(<<gender::size(1), _rest::size(63)>>), do: gender
-  def get_country(<<_head::size(32), country::size(8), _rest::size(24)>>), do: country
   def get_age(<<_head::size(1), age::size(7), _rest::size(56)>>), do: age
+  def get_income(<<_head::8, income::10, _rest::46>>), do: income
+  def get_country(<<_head::size(32), country::size(8), _rest::size(24)>>), do: country
 
   def hash_country_gender_age(<<
         gender::size(1),

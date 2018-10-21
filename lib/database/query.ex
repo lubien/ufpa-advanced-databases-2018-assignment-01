@@ -3,7 +3,7 @@ defmodule Database.Query do
   alias Database.Hashing
   alias Database.Query.Utils
 
-  @db_file "priv/people100.db"
+  @db_file "priv/people1000kk.db"
 
   def query do
     # Extra Queries
@@ -12,8 +12,8 @@ defmodule Database.Query do
     # Assignments
     # count_by_country_and_gender()
     # count_by_country_gender_and_age()
-    #
-    #
+    # average_income_by_country_and_gender()
+    # average_age_by_country_and_gender()
     # count_by_country_and_gender_country_15()
     # count_by_country_and_gender_country_15_gender_male()
     # count_by_country_and_gender_country_lte_15()
@@ -65,6 +65,42 @@ defmodule Database.Query do
         "age" => age,
         "gender" => Person.translate(:gender, gender),
         "count" => count
+      }
+    end)
+    |> Scribe.print()
+  end
+
+  # 3rd query
+  def average_income_by_country_and_gender(file \\ @db_file) do
+    Utils.generic_hashing_average(
+      file,
+      &Hashing.hash_gender_country/1,
+      &Hashing.unhash_gender_country/1,
+      &Person.get_income/1
+    )
+    |> Enum.map(fn {{gender, country}, average} ->
+      %{
+        "country" => Person.translate(:country, country),
+        "gender" => Person.translate(:gender, gender),
+        "average" => average
+      }
+    end)
+    |> Scribe.print()
+  end
+
+  # 4th query
+  def average_age_by_country_and_gender(file \\ @db_file) do
+    Utils.generic_hashing_average(
+      file,
+      &Hashing.hash_gender_country/1,
+      &Hashing.unhash_gender_country/1,
+      &Person.get_age/1
+    )
+    |> Enum.map(fn {{gender, country}, average} ->
+      %{
+        "country" => Person.translate(:country, country),
+        "gender" => Person.translate(:gender, gender),
+        "average" => round(average)
       }
     end)
     |> Scribe.print()
