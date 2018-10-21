@@ -1,7 +1,7 @@
 defmodule Database.MapReduce do
   def map_reduce_merge(stream, mapper, reducer, merger) do
     stream
-    |> Flow.from_enumerable(max_demand: 500, stages: 8)
+    |> Flow.from_enumerable(max_demand: 1, stages: 16)
     |> Flow.map(mapper)
     |> Flow.reduce(fn -> %{} end, reducer)
     |> Enum.reduce(%{}, merger)
@@ -12,12 +12,12 @@ defmodule Database.MapReduce do
         mapper,
         reducer,
         merger,
-        window \\ Flow.Window.count(1_000)
+        window \\ Flow.Window.count(10_000)
       ) do
     start = Time.utc_now()
 
     stream
-    |> Flow.from_enumerable(max_demand: 500, stages: 16)
+    |> Flow.from_enumerable(max_demand: 1, stages: 16)
     |> Flow.map(mapper)
     |> Flow.partition(window: window)
     |> Flow.reduce(fn -> %{} end, reducer)
