@@ -8,7 +8,8 @@ defmodule Database.File do
   end
 
   def stream_chunks(file \\ @default_file, chunk_size) do
-    File.stream!(file, [read_ahead: chunk_size * 3], chunk_size)
+    read_ahead = chunk_size * 3
+    File.stream!(file, [read_ahead: read_ahead], chunk_size)
   end
 
   def stream_groups(file \\ @default_file, group_size \\ @default_group_size) do
@@ -22,7 +23,6 @@ defmodule Database.File do
       parts_byte_size = div(stat.size, stream_count)
 
       for i <- 0..stream_count do
-        # read_part(file, parts_byte_size * i, parts_byte_size, chunk_byte_size)
         offset = parts_byte_size * i
         stream_groups_part(file, group_size, offset, parts_byte_size)
       end
