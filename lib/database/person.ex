@@ -59,6 +59,18 @@ defmodule Database.Person do
     "[#{translate(:country, country)}] #{translate(:gender, gender)}"
   end
 
+  def to_csv(<<
+        sex::size(1),
+        age::size(7),
+        income::size(10),
+        scholarity::size(2),
+        idiom::size(12),
+        country::size(8),
+        coodinates::size(24)
+      >>) do
+    "#{sex},#{age},#{income},#{scholarity},#{idiom},#{country},#{coodinates}"
+  end
+
   defp random_bits(size) do
     min = 0
     max = trunc(:math.pow(2, size) - 1)
