@@ -22,7 +22,10 @@ defmodule Database.MixProject do
   defp deps do
     [
       {:benchee, "~> 0.11", only: :dev},
-      {:flow, "~> 0.14"}
+      {:flow, "~> 0.14"},
+      {:exprof, "~> 0.2.0"},
+      {:parallel_stream, "~> 1.0.5"},
+      {:scribe, "~> 0.8"}
     ]
   end
 end

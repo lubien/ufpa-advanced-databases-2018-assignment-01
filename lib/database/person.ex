@@ -1,4 +1,6 @@
 defmodule Database.Person do
+  @letter_A 65
+
   def random do
     <<
       # Sex
@@ -16,6 +18,44 @@ defmodule Database.Person do
       # Coordinates
       random_bits(24)::size(24)
     >>
+  end
+
+  def is_male?(<<1::size(1), _rest::size(63)>>), do: true
+  # def is_male?(_), do: false
+  def is_male?(<<0::size(1), _rest::size(63)>>), do: false
+
+  # def is_male?(bytes) do
+  #   <<a::binary-size(1), _rest::binary>> = bytes
+  #   IO.inspect({"bytes", byte_size(bytes), a, bytes})
+  #   Process.exit(self(), 1)
+  #   false
+  # end
+
+  def is_female?(tuple), do: not is_male?(tuple)
+
+  def get_gender(<<gender::size(1), _rest::size(63)>>), do: gender
+  def get_country(<<_head::size(32), country::size(8), _rest::size(24)>>), do: country
+  def get_age(<<_head::size(1), age::size(7), _rest::size(56)>>), do: age
+
+  def hash_country_gender_age(<<
+        gender::size(1),
+        age::size(7),
+        _::size(24),
+        country::size(8),
+        _::size(24)
+      >>),
+      do: {gender, age, country}
+
+  def translate(:gender, 1), do: "Male"
+  def translate(:gender, 0), do: "Female"
+
+  def translate(:country, number) do
+    <<left::4, right::4>> = <<number::8>>
+    <<left + @letter_A::8, right + @letter_A::8>>
+  end
+
+  def translate(:country_and_gender, {country, gender}) do
+    "[#{translate(:country, country)}] #{translate(:gender, gender)}"
   end
 
   defp random_bits(size) do

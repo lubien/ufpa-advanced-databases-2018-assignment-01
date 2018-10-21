@@ -2,10 +2,10 @@ defmodule Database.Seeder do
   alias Database.Person
 
   @file_name "priv/people.db"
-  @many_people 1_000_000
+  @many_people 1_000_000_000
 
   def seed do
-    seed_by_delayed_writes_group()
+    seed_by_writes_group_flow()
   end
 
   def seed_by_writes do
