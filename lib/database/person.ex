@@ -49,6 +49,15 @@ defmodule Database.Person do
 
   def translate(:gender, 1), do: "Male"
   def translate(:gender, 0), do: "Female"
+  def translate(:scholarity, 0), do: "None"
+  def translate(:scholarity, 1), do: "Basic"
+  def translate(:scholarity, 2), do: "High School"
+  def translate(:scholarity, 3), do: "Superior"
+
+  def translate(:idiom, number) do
+    <<left::8, right::4>> = <<number::12>>
+    <<left + @letter_A::8, right + @letter_A::8>>
+  end
 
   def translate(:country, number) do
     <<left::4, right::4>> = <<number::8>>

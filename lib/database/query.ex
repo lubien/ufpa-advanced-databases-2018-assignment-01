@@ -15,9 +15,9 @@ defmodule Database.Query do
       5 => &count_by_country_and_gender_country_15/1,
       6 => &count_by_country_and_gender_country_15_gender_male/1,
       7 => &count_by_country_and_gender_country_lte_15/1,
-      8 => &count_by_country_and_gender/1,
-      9 => &count_by_country_and_gender/1,
-      10 => &count_by_country_and_gender/1
+      8 => &count_by_country_and_scholarity_and_scholarity_is_none/1,
+      9 => &count_by_country_and_idiom_and_idiom_is_0/1,
+      10 => &count_by_country_and_coordinates_and_live_in_null/1
     }
 
     func = Map.get(queries, index)
@@ -180,6 +180,84 @@ defmodule Database.Query do
       %{
         "country" => Person.translate(:country, country),
         "gender" => Person.translate(:gender, gender),
+        "count" => count
+      }
+    end)
+    |> Scribe.print()
+  end
+
+  # 8th query
+  def count_by_country_and_scholarity_and_scholarity_is_none(file \\ @db_file) do
+    filter_fn = fn
+      <<_::18, 0::8, _::38>> ->
+        true
+
+      _ ->
+        false
+    end
+
+    Utils.generic_hashing_filtered_count(
+      file,
+      &Hashing.hash_country_scholarity/1,
+      &Hashing.unhash_country_scholarity/1,
+      filter_fn
+    )
+    |> Enum.map(fn {{country, scholarity}, count} ->
+      %{
+        "country" => Person.translate(:country, country),
+        "scholarity" => Person.translate(:scholarity, scholarity),
+        "count" => count
+      }
+    end)
+    |> Scribe.print()
+  end
+
+  # 9th query
+  def count_by_country_and_idiom_and_idiom_is_0(file \\ @db_file) do
+    filter_fn = fn
+      <<_::20, 0::12, _::32>> ->
+        true
+
+      _ ->
+        false
+    end
+
+    Utils.generic_hashing_filtered_count(
+      file,
+      &Hashing.hash_country_idiom/1,
+      &Hashing.unhash_country_idiom/1,
+      filter_fn
+    )
+    |> Enum.map(fn {{country, idiom}, count} ->
+      %{
+        "country" => Person.translate(:country, country),
+        "idiom" => Person.translate(:idiom, idiom),
+        "count" => count
+      }
+    end)
+    |> Scribe.print()
+  end
+
+  # 9th query
+  def count_by_country_and_coordinates_and_live_in_null(file \\ @db_file) do
+    filter_fn = fn
+      <<_::40, 0::24>> ->
+        true
+
+      _ ->
+        false
+    end
+
+    Utils.generic_hashing_filtered_count(
+      file,
+      &Hashing.hash_country_coordinates/1,
+      &Hashing.unhash_country_coordinates/1,
+      filter_fn
+    )
+    |> Enum.map(fn {{country, coordinates}, count} ->
+      %{
+        "country" => Person.translate(:country, country),
+        "idiom" => coordinates,
         "count" => count
       }
     end)

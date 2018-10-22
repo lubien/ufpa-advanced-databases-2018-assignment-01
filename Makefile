@@ -47,3 +47,12 @@ query-6:
 
 query-7:
 	time psql -U "${DB_USER}" -d "${DB_NAME}" -a -c "select country, gender, count(*) from people where country >= 0 and country <= 15 group by country, gender;"
+
+query-8:
+	time psql -U "${DB_USER}" -d "${DB_NAME}" -a -c "select country, scholarity, count(*) from people where scholarity = 0 group by country, scholarity;"
+
+query-9:
+	time psql -U "${DB_USER}" -d "${DB_NAME}" -a -c "select country, idiom, count(*) from people where idiom = 0 group by country, idiom;"
+
+query-10:
+	time psql -U "${DB_USER}" -d "${DB_NAME}" -a -c "select country, coordinates, count(*) from people where coordinates = 0 group by country, coordinates;"
