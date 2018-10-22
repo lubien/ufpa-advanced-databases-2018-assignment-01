@@ -3,21 +3,22 @@ defmodule Mix.Tasks.Query do
 
   alias Database.Query
 
-  def run(_) do
-    {microseconds, result} = :timer.tc(&Query.query/0)
+  def run(args) do
+    {parsed_args, _} = OptionParser.parse!(args, strict: [query: :integer, db: :string])
 
-    seconds = microseconds / 1_000_000
+    db = Keyword.get(parsed_args, :db, "priv/people.db")
+    query = Keyword.get(parsed_args, :query, :undefined)
 
-    IO.inspect(result)
+    if query == :undefined do
+      IO.warn("Undefined --query option")
+      System.halt(1)
+    end
 
-    # ft =
-    #   result
-    #   |> Enum.reduce(%{}, fn {key, val}, acc ->
-    #     Map.update(acc, key, val, &(&1 + val))
-    #   end)
+    if query < 1 or query > 10 do
+      IO.warn("--query must be between 1 and 10")
+      System.halt(1)
+    end
 
-    # IO.inspect({result, ft, ft.true + ft.false})
-
-    Mix.shell().info("Queried in #{seconds}s")
+    Query.run(db, query)
   end
 end
