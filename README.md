@@ -113,7 +113,7 @@ CPU(s) de nó0 NUMA:         0-3
  Timing buffered disk reads: 392 MB in  3.00 seconds = 130.50 MB/sec
 ```
 
-Query       | First (SGBD)    | First (Bin)     | Mean (SGBD)  | Mean (Bin)
+Query       | First (DBMS)    | First (Bin)     | Mean (DBMS)  | Mean (Bin)
 ------------|-----------------|-----------------|--------------|-----------
 1           | 748s            | 134s            | 640s         | 134s
 2           | -               | 456s            | -            | 453s
