@@ -1,0 +1,1 @@
+time head -c 8000000000 </dev/urandom >people.db
